@@ -1,4 +1,4 @@
-'use client';
+"use client"
 
 import React, { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -7,8 +7,24 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Copy, Plus, Trash2 } from 'lucide-react';
 
+type CitationType = 'book' | 'journal' | 'website';
+
+interface Citation {
+  type: CitationType;
+  authors: string;
+  title: string;
+  publisher: string;
+  year: string;
+  url: string;
+  containerTitle: string;
+  volume: string;
+  issue: string;
+  pages: string;
+  id: number;
+}
+
 const CitationGenerator = () => {
-  const [citations, setCitations] = useState([{
+  const [citations, setCitations] = useState<Citation[]>([{
     type: 'book',
     authors: '',
     title: '',
@@ -22,9 +38,9 @@ const CitationGenerator = () => {
     id: Date.now()
   }]);
 
-  const [copiedIndex, setCopiedIndex] = useState(null);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
-  const formatAuthors = (authors) => {
+  const formatAuthors = (authors: string): string => {
     if (!authors) return '';
     const authorList = authors.split(',').map(author => author.trim());
     if (authorList.length === 1) {
@@ -37,7 +53,7 @@ const CitationGenerator = () => {
     return '';
   };
 
-  const generateCitation = (citation) => {
+  const generateCitation = (citation: Citation): string => {
     switch (citation.type) {
       case 'book':
         return `${formatAuthors(citation.authors)} "${citation.title}." ${citation.publisher}, ${citation.year}.`;
@@ -53,7 +69,7 @@ const CitationGenerator = () => {
     }
   };
 
-  const handleChange = (index, field, value) => {
+  const handleChange = (index: number, field: keyof Citation, value: string) => {
     const newCitations = [...citations];
     newCitations[index] = {
       ...newCitations[index],
@@ -78,12 +94,12 @@ const CitationGenerator = () => {
     }]);
   };
 
-  const removeCitation = (index) => {
+  const removeCitation = (index: number) => {
     const newCitations = citations.filter((_, i) => i !== index);
     setCitations(newCitations);
   };
 
-  const copyToClipboard = async (text, index) => {
+  const copyToClipboard = async (text: string, index: number) => {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedIndex(index);
@@ -106,7 +122,7 @@ const CitationGenerator = () => {
                 <div className="flex justify-between items-center">
                   <Select
                     value={citation.type}
-                    onValueChange={(value) => handleChange(index, 'type', value)}
+                    onValueChange={(value: CitationType) => handleChange(index, 'type', value)}
                   >
                     <SelectTrigger className="w-32">
                       <SelectValue />
